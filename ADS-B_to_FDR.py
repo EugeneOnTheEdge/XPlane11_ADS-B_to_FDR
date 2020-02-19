@@ -104,12 +104,14 @@ for data in ADSB_content:
 				if xplane_parameter == 'GEAR':
 					parameter_value = str(DEFAULT_DOWN)
 
-				else:
-					if ((xplane_parameter == 'NAV-1 FREQUENCY') or (xplane_parameter == 'NAV-2 FREQUENCY')):
-						parameter_value = str(DEFAULT_NAV_FREQUENCY)
+				if xplane_parameter == 'BARO':
+					parameter_value = str(STD_PRESSURE)
 
-					else:
-						parameter_value = str(DEFAULT_UNAVAILABLE)
+				elif ((xplane_parameter == 'NAV-1 FREQUENCY') or (xplane_parameter == 'NAV-2 FREQUENCY')):
+					parameter_value = str(DEFAULT_NAV_FREQUENCY)
+
+				else:
+					parameter_value = str(DEFAULT_UNAVAILABLE)
 
 			FDR_data.append(parameter_value.split("\n")[0])
 
