@@ -1,4 +1,4 @@
-# XPlane11 ADS-B to FDR
+# ADS-B to FDR Converter for X-Plane 11
 This software converts a given ADS-B flight radar data (usually given by FlightRadar24 soon after an airline accident) to a playable FDR file (Flight Data Recorder) for X-Plane 11 PC Flight Simulator.
 
 Now you can see what the pilot "sees" just before their aircraft goes down.
