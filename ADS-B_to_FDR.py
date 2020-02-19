@@ -77,7 +77,7 @@ for data in ADSB_content:
 			outputFDRfile.write("DATE," + ADSB_date + ",\n")
 			outputFDRfile.write("PRES," + str(STD_PRESSURE) + ",\n")
 			outputFDRfile.write("WIND," + "0,0" + ",\n") # From [angle] Heading, speed [knots]
-			outputFDRfile.write("TIME," + "12:00:00" + ",\n") # 24-hour format
+			outputFDRfile.write("TIME," + ADSB_data[0].split(" ")[1].split("Z")[0] + ",\n")
 			outputFDRfile.write("ACFT," + AIRCRAFT_acf_FILENAME + "\n\n")
 	
 	for xplane_parameter in REQUIRED_XPLANE_PARAMETERS:
