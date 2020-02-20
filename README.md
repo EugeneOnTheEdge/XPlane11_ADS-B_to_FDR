@@ -10,8 +10,8 @@ ___
 On _that_ note (no pun intended), I have created a stupid-simple algorithm that **extrapolates** the **aircraft's pitch and roll**. The pitch works smoothly; the roll doesn't. I'm currently working to make the roll much smoother. With all of those said, yes, the pitch and roll are indeed **_completely artificial_** but they should decently represent what the original accident looks like.
 (Without artificial pitch and roll, the aircraft will just be pitching and rolling at 0 degrees while moving around the global map... yeah, imagine how awful it looks..) 
 
-Have a look at JT610_Granular_ADSB_Data.csv for a real-world example of ADS-B data. The file provides basic parameters recorded in a Lion Air JT610 which plunged into an Indonesian sea shortly after take off back in 2018. Credit to ADS-B file goes to FlightRadar24.com: https://www.flightradar24.com/blog/flightradar24-data-regarding-lion-air-flight-jt610/
+Have a look at JT610_Granular_ADSB_Data.csv for a real-world example of ADS-B data. The file provides basic parameters recorded in a Lion Air JT610 which plunged into an Indonesian sea shortly after take off back in 2018. Credit to the Granular ADS-B file goes to *FlightRadar24.com*: https://www.flightradar24.com/blog/flightradar24-data-regarding-lion-air-flight-jt610/
 
-You can also try finding Granular ADS-B CSV files from FlightRadar24 and try converting them using the software. If you do this, however, note that you MUST change the attribute names in the CSV file so that it matches with JT610_Granular_ADSB_Data.csv 's. If you don't, it MAY work but some things may not occur as intended.
+You can also try finding Granular ADS-B CSV files from *FlightRadar24* and try converting them using the software. If you do this, however, note that you MUST change the attribute names in the CSV file so that it matches with JT610_Granular_ADSB_Data.csv 's. If you don't, it MAY work but some things may not occur as intended.
 
 ## Enjoy seating yourself in a plane crash!
