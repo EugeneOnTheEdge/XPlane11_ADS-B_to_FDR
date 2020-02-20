@@ -14,4 +14,4 @@ Have a look at JT610_Granular_ADSB_Data.csv for a real-world example of ADS-B da
 
 You can also try finding Granular ADS-B CSV files from FlightRadar24 and try converting them using the software. If you do this, however, note that you MUST change the attribute names in the CSV file so that it matches with JT610_Granular_ADSB_Data.csv 's. If you don't, it MAY work but some things may not occur as intended.
 
-## Enjoy putting yourself in a plane crash!
+## Enjoy seating yourself in a plane crash!
