@@ -12,6 +12,9 @@ On _that_ note (no pun intended), I have created a stupid-simple algorithm that 
 
 Have a look at JT610_Granular_ADSB_Data.csv for a real-world example of an ADS-B data. The file provides basic parameters recorded in the Lion Air JT610 that plunged into an Indonesian sea back in 2018. Credit to the Granular ADS-B file goes to *FlightRadar24.com*: https://www.flightradar24.com/blog/flightradar24-data-regarding-lion-air-flight-jt610/
 
+You may also want to replay Kobe Bryant's last moments in his N72EX S-76 helicopter. I have modified the N72EX-Granular-Data.csv so it only covers Kobe's last 8 minutes in his life (I didn't include the whole flight since X-Plane would run out of memory and crash). Use my software to convert it to an FDR file, load it onto X-Plane, and.. moment of silence for Kobe.
+Credit to the Kobe's N72EX Granular ADS-B data goes to _FlightRadar24_: https://www.flightradar24.com/blog/kobe-bryant-believed-dead-in-helicopter-crash/
+
 You can also try finding Granular ADS-B CSV files from *FlightRadar24* and try converting them using the software. If you do this, however, note that you MUST change the attribute names in the CSV file so that it matches with JT610_Granular_ADSB_Data.csv 's. If you don't, it MAY work but some things may not occur as intended.
 
 **Change the lines 44-46 in the ADS-B_to_FDR.py code so it matches to your aircraft callsign, X-Plane's aircraft .acf file, and the CSV file you want to convert.**
