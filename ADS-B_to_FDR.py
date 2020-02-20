@@ -13,7 +13,7 @@ def convert_UTCTime_to_Seconds(s):
 	HMS_in_Seconds = float(HMSarray[0]) * 60 * 60 + float(HMSarray[1]) * 60 + float(HMSarray[2])
 	return HMS_in_Seconds
 
-#---- PRE-DEFINED CONSTANTS ---
+#---- PRE-DEFINED CONSTANTS ----
 DEFAULT_UNAVAILABLE = 0
 
 DEFAULT_OFF = 0
@@ -33,6 +33,7 @@ STD_PRESSURE = 29.92 #[inches Hg]
 
 # ROLL_SPEED_AT_[airspeed in knots]
 # Determines how much the heading changes for every second, when an aircraft is roll is [+ROLL_MULTIPLIER] or [-ROLL_MULTIPLIER] degrees
+# THE FOLLOWING CONSTANT ONLY APPLIES TO COMMERCIAL JETS (738, A320, etc.) HELI'S WILL BE INACCURATE!!
 ROLL_MULTIPLIER = 10 # 10-degree roll
 HEADING_RATE_AT_200 = 0.66667 # 0.66667 degrees of change-in-heading per second @ 10-degree roll
 HEADING_RATE_AT_300 = 0.5		# 0.5 degrees of change-in-heading per second @ 10-degree roll
@@ -41,9 +42,9 @@ HEADING_RATE_100KNOTS_DIFFERENCE = math.fabs(HEADING_RATE_AT_300 - HEADING_RATE_
 REQUIRED_XPLANE_PARAMETERS = ['TIME', 'TEMP', 'LONGITUDE', 'LATITUDE', 'ALTITUDE', 'RADIO ALTIMETER', 'AILERON RATIO', 'ELEVATOR RATIO', 'RUDDER RATIO', 'PITCH', 'ROLL', 'HEADING,TRACK', 'SPEED,GROUND SPEED', 'VVI,VERTICAL SPEED', 'SLIP', 'TURN', 'MACH', 'AOA', 'STALL', 'FLAP HANDLE POSITION', 'FLAP ACTUAL', 'SLAT RATIO', 'SBRK,SPEEDBRAKE', 'GEAR HANDLE POSITION', 'NGEAR,NOSE GEAR', 'LGEAR,LEFT GEAR', 'RGEAR,RIGHT GEAR', 'ELEV,TRIM', 'NAV-1 FREQUENCY', 'NAV-2 FREQUENCY', 'NAV-1 TYPE', 'NAV-2 TYPE', 'OBS-1', 'OBS-2', 'DME-1', 'DME-2', 'NAV-1 LOCALIZER HORIZONTAL DEFLECTION', 'NAV-2 LOCALIZER HORIZONTAL DEFLECTION', 'NAV-1 N/T/F', 'NAV-2 N/T/F', 'NAV-1 GLIDESLOPE DEFLECTION', 'NAV-2 GLIDESLOPE DEFLECTION', 'OM', 'MM', 'IM', 'F-DIR ON-OFF,FLIGHT DIRECTOR ON-OFF', 'F-DIR PITCH,FLIGHT DIRECTOR PITCH', 'F-DIR ROLL,FLIGHT DIRECTOR ROLL', 'KTMACH', 'THROT,AUTO-THROTTLE', 'HDG MODE', 'ALT MODE', 'HNAV MODE', 'GLSLP MODE', 'BACK MODE', 'SPEED SELEC', 'HDG SELEC', 'VVI SELEC,VS SELEC', 'ALT SELEC', 'BARO', 'DH,DECISION HEIGHT', 'MCAUT,MASTER CAUTION', 'MWARN,MASTER WARNING', 'GPWS', 'MMODE,MAP MODE', 'MRANG,MAP RANGE', 'THROT RATIO', 'PROP CNTRL', 'PROP RPM', 'PROP DEG', 'N1', 'N2', 'MPR', 'EPR', 'TORQ', 'FF,FUEL FLOW', 'ITT', 'EGT', 'CHT']
 #-------------------------------
 
-AIRCRAFT_CALLSIGN = "LNI610" # input("Enter aircraft callsign > ").upper()
-AIRCRAFT_acf_FILENAME = "Aircraft/Laminar Research/B738 FDR Custom Livery/b738.acf" # "Aircraft/" + input("Enter X-Plane aircraft's .acf location > /Aircraft/")
-fileName = "JT610_Granular_ADSB_Data.csv" #input("Enter ADS-B .csv filename > ")
+AIRCRAFT_CALLSIGN = "N72EX" # input("Enter aircraft callsign > ").upper()
+AIRCRAFT_acf_FILENAME = "Aircraft/Laminar Research/Sikorsky S-76/S-76C.acf" # "Aircraft/" + input("Enter X-Plane aircraft's .acf location > /Aircraft/")
+fileName = "N72EX-Granular-Data.csv" #input("Enter ADS-B .csv filename > ")
 ADSBFile = open(fileName,"r") 
 
 ADSB_parameters = ADSBFile.readline().split(",")
@@ -52,10 +53,14 @@ ADSB_startTime = None
 
 lineCount = 1
 
+artificialPitch = True
+artificialRoll = False
+
 print ("\n## Recognized ADS-B Parameters ##")
 for p in range(len(ADSB_parameters)):
 	# Removes the indicated units from parameter name
 	ADSB_parameters[p] = (" ".join(ADSB_parameters[p].upper().split("(")[0].rsplit(" ")))
+	ADSB_parameters[p] = " ".join(ADSB_parameters[p].rsplit("\n"))
 	if (ADSB_parameters[p])[-1] == ' ':
 		ADSB_parameters[p] = (ADSB_parameters[p])[:len(ADSB_parameters[p]) - 1:]
 
@@ -113,7 +118,7 @@ for data in ADSB_content:
 					time_difference_from_previous_data = ADSB_data_currentTime - ADSB_data_previousTime
 					ADSB_data_previousTime = ADSB_data_currentTime
 
-					parameter_value = str(time_difference_from_start_data)[:5] # Take up to 5 characters in the time string
+					parameter_value = "%.2f" % time_difference_from_start_data
 
 				else:
 					# Get the ADS-B value corresponding to the index (location) of its' parameter name that is required for X-Plane's FDR
@@ -129,43 +134,53 @@ for data in ADSB_content:
 					parameter_value = STD_PRESSURE
 
 				elif xplane_parameter == 'PITCH':
-					# The following 'PITCH' section APPROXIMATES the aircraft's pitch angle, if it's unavailable in the ADS-B data (which it most likely is)
-					ADSB_data_verticalSpeed = float(ADSB_data[ADSB_parameters.index('VERTICAL SPEED')]) # in feet/minute (fpm)
+					if artificialPitch:
+              			# The following 'PITCH' section APPROXIMATES the aircraft's pitch angle, if it's unavailable in the ADS-B data (which it most likely is)
+						ADSB_data_verticalSpeed = float(ADSB_data[ADSB_parameters.index('VERTICAL SPEED')]) # in feet/minute (fpm)
 
-					ADSB_data_groundSpeed = float(ADSB_data[ADSB_parameters.index('GROUND SPEED')]) # in knots
-					ADSB_data_groundSpeed_fpm = ADSB_data_groundSpeed * 1.852 # 1.852 km/h per knots; 
-					ADSB_data_groundSpeed_fpm *= (1000 / 60) # to meters/minute
-					ADSB_data_groundSpeed_fpm *= 3.28084 # to feet/minute (fpm)
+						ADSB_data_groundSpeed = float(ADSB_data[ADSB_parameters.index('GROUND SPEED')]) # in knots
+						ADSB_data_groundSpeed_fpm = ADSB_data_groundSpeed * 1.852 # 1.852 km/h per knots; 
+						ADSB_data_groundSpeed_fpm *= (1000 / 60) # to meters/minute
+						ADSB_data_groundSpeed_fpm *= 3.28084 # to feet/minute (fpm)
 
-					pitch = math.atan(ADSB_data_verticalSpeed / ADSB_data_groundSpeed_fpm) * (180/math.pi)
-					pitch = "%.2f" % pitch
+						if ADSB_data_groundSpeed_fpm != 0:
+							pitch = math.atan(ADSB_data_verticalSpeed / ADSB_data_groundSpeed_fpm) * (180/math.pi)
+							pitch = "%.2f" % pitch
 
-					parameter_value = pitch
+						else:
+							pitch = "0.0"
+
+						parameter_value = pitch
+					else:
+						parameter_value = "0.0"
 
 				elif xplane_parameter == 'ROLL':
-					# The following 'ROLL' approximates the aircraft's roll angle, if it's unavailable in the ADS-B data (which it most likely is)
+					if artificialRoll:
+          	    		# The following 'ROLL' approximates the aircraft's roll angle, if it's unavailable in the ADS-B data (which it most likely is)
 
-					# Gets the change in heading---
-					ADSB_data_currentHeading = float(ADSB_data[ADSB_parameters.index('TRACK')])
+                        # Gets the change in heading---
+						ADSB_data_currentHeading = float(ADSB_data[ADSB_parameters.index('TRACK')])
 
-					heading_difference_from_previous_data = ADSB_data_currentHeading - ADSB_data_previousHeading
-					ADSB_data_previousHeading = ADSB_data_currentHeading
-					#---
+						heading_difference_from_previous_data = ADSB_data_currentHeading - ADSB_data_previousHeading
+						ADSB_data_previousHeading = ADSB_data_currentHeading
+                        #---
 
-					if time_difference_from_previous_data != 0: # if it's not the first tuple-data in the ADS-B
-						change_in_heading_per_second = heading_difference_from_previous_data / time_difference_from_previous_data
+						if time_difference_from_previous_data != 0: # if it's not the first tuple-data in the ADS-B
+							change_in_heading_per_second = heading_difference_from_previous_data / time_difference_from_previous_data
 
-						if ADSB_data_groundSpeed < 300:
-							speedDifference_ratio = math.fabs(ADSB_data_groundSpeed - 200) / 200
-							roll_rate = HEADING_RATE_AT_200 + (speedDifference_ratio * HEADING_RATE_AT_200)
+							if ADSB_data_groundSpeed < 300:
+								speedDifference_ratio = math.fabs(ADSB_data_groundSpeed - 200) / 200
+								roll_rate = HEADING_RATE_AT_200 + (speedDifference_ratio * HEADING_RATE_AT_200)
+							else:
+								speedDifference_ratio = math.fabs(ADSB_data_groundSpeed - 300) / 300
+								roll_rate = HEADING_RATE_AT_300 + (speedDifference_ratio * HEADING_RATE_AT_300)
+
+								aircraft_roll = roll_rate * change_in_heading_per_second
+								aircraft_roll *= ROLL_MULTIPLIER
+								parameter_value = aircraft_roll
+
 						else:
-							speedDifference_ratio = math.fabs(ADSB_data_groundSpeed - 300) / 300
-							roll_rate = HEADING_RATE_AT_300 + (speedDifference_ratio * HEADING_RATE_AT_300)
-
-						aircraft_roll = roll_rate * change_in_heading_per_second
-						aircraft_roll *= ROLL_MULTIPLIER
-						parameter_value = aircraft_roll
-
+							parameter_value = 0
 					else:
 						parameter_value = 0
 
